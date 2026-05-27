@@ -14,6 +14,9 @@ permissions:
 
 jobs:
 
+  # -----------------------
+  # 1. TEST JOB (CI)
+  # -----------------------
   test:
     runs-on: ubuntu-latest
 
@@ -24,15 +27,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run tests
         run: npm test
 
 
+  # -----------------------
+  # 2. SAST (SEMGREP)
+  # -----------------------
   semgrep:
     runs-on: ubuntu-latest
 
@@ -42,10 +48,13 @@ jobs:
 
       - name: Run Semgrep scan
         run: |
-          docker run --rm -v "${PWD}:/src" returntocorp/semgrep \
-          semgrep --config auto /src
+          docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep \
+          --config="p/security-audit" /src
 
 
+  # -----------------------
+  # 3. SCA (NPM AUDIT)
+  # -----------------------
   dependency-check:
     runs-on: ubuntu-latest
 
@@ -56,15 +65,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run npm audit
         run: npm audit --audit-level=high
 
 
+  # -----------------------
+  # 4. CONTAINER SCAN (TRIVY)
+  # -----------------------
   trivy-scan:
     runs-on: ubuntu-latest
 
@@ -75,11 +87,11 @@ jobs:
       - name: Build Docker image
         run: docker build -t devsecops-lab .
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.20.0
+      - name: Run Trivy scan
+        uses: aquasecurity/trivy-action@0.24.0
         with:
           image-ref: devsecops-lab
           format: table
-          exit-code: "1"
-          ignore-unfixed: true
+          exit-code: 1
           severity: CRITICAL,HIGH
+          ignore-unfixed: true
