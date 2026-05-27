@@ -22,10 +22,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4.1.1
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
@@ -44,7 +46,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
       - name: Run Semgrep scan
         run: |
@@ -60,10 +64,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4.1.1
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
@@ -82,7 +88,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
       - name: Build Docker image
         run: docker build -t devsecops-lab .
