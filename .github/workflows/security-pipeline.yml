@@ -24,13 +24,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run tests
         run: npm test
+
 
   semgrep:
     runs-on: ubuntu-latest
@@ -41,8 +42,8 @@ jobs:
 
       - name: Run Semgrep scan
         run: |
-          docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep --config auto /src
-
+          docker run --rm -v "${PWD}:/src" returntocorp/semgrep \
+          semgrep --config auto /src
 
 
   dependency-check:
@@ -55,13 +56,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run npm audit
-        run: npm audit
+        run: npm audit --audit-level=high
 
 
   trivy-scan:
@@ -75,10 +76,10 @@ jobs:
         run: docker build -t devsecops-lab .
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.20.0
         with:
           image-ref: devsecops-lab
           format: table
-          exit-code: 1
+          exit-code: "1"
           ignore-unfixed: true
           severity: CRITICAL,HIGH
